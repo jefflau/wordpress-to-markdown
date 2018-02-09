@@ -6,12 +6,12 @@ Instructions for exporting your information from WordPress [can be found here](h
 
 The folder structure was designed after my blog. I like the structure because it groups the files for the post with the post itself. If you want a different format, you'll need to modify the script.
 
-	/2013/11/this-is-a-post/index.html.md
-	/2013/11/this-is-a-post/image-for-the-post.jpg
+	/2013-11-11-this-is-a-post/index.md
+	/2013-11-11-this-is-a-post/image-for-the-post.jpg
 
 ### Works on my box
 
-**This is highly experimental at best. It was developed for my own use to do a one time conversion from WordPress to markdown for a static generator such as [DocPad](https://github.com/bevry/docpad). It is designed to be used one time and then throw away.**
+**This is highly experimental at best. It was developed for my own use to do a one time conversion from WordPress to markdown for Gatsby. The original repo was created for Windows and I have converted it to work for Mac and also changed the folder structure.
 
 ### Technical Details
 
