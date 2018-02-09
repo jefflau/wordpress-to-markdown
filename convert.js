@@ -56,80 +56,80 @@ function processPost(post) {
 		}
 	}
 
-	var fullPath = 'out\\' + postDate.getFullYear() + '\\' + getPaddedMonthNumber(postDate.getMonth() + 1) + '\\' + slug;
+	let stringDate = postDate.getFullYear() + '-' + getPaddedMonthNumber(postDate.getMonth() + 1) + '-' + getPaddedDayNumber(postDate.getDate())
 
-	fs.mkdir('out\\' + postDate.getFullYear(), function() {
-		fs.mkdir('out\\' + postDate.getFullYear() + '\\' + getPaddedMonthNumber(postDate.getMonth() + 1), function() {
-			fs.mkdir(fullPath, function() {
-				//Find all images
-				var patt = new RegExp("(?:src=\"(.*?)\")", "gi");
-				
-				var m;
-				var matches = [];
-				while((m = patt.exec(postData)) !== null) {
-					matches.push(m[1]);
-					//console.log("Found: " + m[1]);
-				}
+	var fullPath = `out/${stringDate}-${slug}`;
+	console.log(fullPath)
+
+	fs.mkdir(fullPath, function() {
+		//Find all images
+		var patt = new RegExp("(?:src=\"(.*?)\")", "gi");
+		
+		var m;
+		var matches = [];
+		while((m = patt.exec(postData)) !== null) {
+			matches.push(m[1]);
+			//console.log("Found: " + m[1]);
+		}
+		
 
 
-				if(matches != null && matches.length > 0) {
-					for(var i = 0; i < matches.length; i++) {
-						//console.log('Post image found: ' + matches[i])
+		if(matches != null && matches.length > 0) {
+			for(var i = 0; i < matches.length; i++) {
+				//console.log('Post image found: ' + matches[i])
 
-						var url = matches[i];
-						var urlParts = matches[i].split('/');
-						var imageName = urlParts[urlParts.length - 1];
+				var url = matches[i];
+				var urlParts = matches[i].split('/');
+				var imageName = urlParts[urlParts.length - 1];
 
-						var filePath = fullPath + '\\' + imageName;
+				var filePath = fullPath + '/' + imageName;
 
-						downloadFile(url, filePath);
+				downloadFile(url, filePath);
 
-						//Make the image name local relative in the markdown
-						postData = postData.replace(url, imageName);
-						//console.log('Replacing ' + url + ' with ' + imageName);
-					}
-				}
+				//Make the image name local relative in the markdown
+				postData = postData.replace(url, imageName);
+				//console.log('Replacing ' + url + ' with ' + imageName);
+			}
+		}
 
-				var markdown = toMarkdown.toMarkdown(postData);
+		var markdown = toMarkdown.toMarkdown(postData);
 
-				//Fix characters that markdown doesn't like
-				// smart single quotes and apostrophe
-    			markdown = markdown.replace(/[\u2018|\u2019|\u201A]/g, "\'");
-    			// smart double quotes
-    			markdown = markdown.replace(/&quot;/g, "\"");
-    			markdown = markdown.replace(/[\u201C|\u201D|\u201E]/g, "\"");
-				// ellipsis
-				markdown = markdown.replace(/\u2026/g, "...");
-				// dashes
-				markdown = markdown.replace(/[\u2013|\u2014]/g, "-");
-				// circumflex
-				markdown = markdown.replace(/\u02C6/g, "^");
-				// open angle bracket
-				markdown = markdown.replace(/\u2039/g, "<");
-				markdown = markdown.replace(/&lt;/g, "<");
-				// close angle bracket
-				markdown = markdown.replace(/\u203A/g, ">");
-				markdown = markdown.replace(/&gt;/g, ">");
-				// spaces
-				markdown = markdown.replace(/[\u02DC|\u00A0]/g, " ");
-				// ampersand
-				markdown = markdown.replace(/&amp;/g, "&");
+		//Fix characters that markdown doesn't like
+		// smart single quotes and apostrophe
+			markdown = markdown.replace(/[\u2018|\u2019|\u201A]/g, "\'");
+			// smart double quotes
+			markdown = markdown.replace(/&quot;/g, "\"");
+			markdown = markdown.replace(/[\u201C|\u201D|\u201E]/g, "\"");
+		// ellipsis
+		markdown = markdown.replace(/\u2026/g, "...");
+		// dashes
+		markdown = markdown.replace(/[\u2013|\u2014]/g, "-");
+		// circumflex
+		markdown = markdown.replace(/\u02C6/g, "^");
+		// open angle bracket
+		markdown = markdown.replace(/\u2039/g, "<");
+		markdown = markdown.replace(/&lt;/g, "<");
+		// close angle bracket
+		markdown = markdown.replace(/\u203A/g, ">");
+		markdown = markdown.replace(/&gt;/g, ">");
+		// spaces
+		markdown = markdown.replace(/[\u02DC|\u00A0]/g, " ");
+		// ampersand
+		markdown = markdown.replace(/&amp;/g, "&");
 
-				var header = "";
-				header += "---\n";
-				header += "layout: post\n";
-				header += "title: " + postTitle + "\n";
-				header += "date: " + postDate.getFullYear() + '-' + getPaddedMonthNumber(postDate.getMonth() + 1) + '-' + getPaddedDayNumber(postDate.getDate()) + "\n";
-				if(categories.length > 0)
-					header += "tags: " + JSON.stringify(categories) + '\n';
-				header += "---\n";
-				header += "\n";
+		var header = "";
+		header += "---\n";
+		header += "title: " + postTitle + "\n";
+		header += "date: " + stringDate + "\n";
+		header += "slug: /"+ slug + "\n";
+		if(categories.length > 0)
+			header += "tags: " + JSON.stringify(categories) + '\n';
+		header += "---\n";
+		header += "\n";
 
-				fs.writeFile(fullPath + '\\index.html.md', header + markdown, function(err) {
-
-				});
-			});
-		});		
+		fs.writeFile(fullPath + "/" + stringDate + '-' + slug + '.md', header + markdown, function(err) {
+			if(err) console.log(err)
+		});
 	});
 }
 
